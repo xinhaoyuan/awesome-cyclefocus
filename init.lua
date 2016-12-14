@@ -54,8 +54,8 @@ cyclefocus = {
         -- Default callback, which will be applied for all offsets (first).
         default = function (preset, args)
             -- Default font and icon size (gets overwritten for current/0 index).
-            preset.font = 'sans 8'
-            preset.icon_size = 36
+            preset.font = 'sans 16'
+            preset.icon_size = 32
             preset.text = escape_markup(cyclefocus.get_object_name(args.client))
 
             -- Display the notification on the current screen (mouse).
@@ -71,7 +71,7 @@ cyclefocus = {
 
         -- Preset for current entry.
         ["0"] = function (preset, args)
-            preset.font = 'sans 12'
+            preset.font = 'sans 20'
             preset.icon_size = 48
             -- Use get_object_name to handle .name=nil.
             preset.text = escape_markup(cyclefocus.get_object_name(args.client))
@@ -222,6 +222,33 @@ function history.add(c)
     history.delete(c)
     -- Record the client has latest focused
     table.insert(history.stack, 1, c)
+end
+
+function cyclefocus.find_history(idx, filters)
+   for _, c in ipairs(history.stack) do
+      local filtered = false
+      
+      for _, f in pairs(filters) do
+         if not f(c) then
+            filtered = true
+            break
+         end
+      end
+      
+      if not filtered then
+         if idx <= 0 then
+            return c
+         else
+            idx = idx - 1
+         end
+      end
+   end
+
+   if idx >= #history.stack then
+      return history.stack[#history.stack]
+   else
+      return history.stack[idx + 1]
+   end
 end
 -- }}}
 
