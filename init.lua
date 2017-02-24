@@ -9,6 +9,7 @@ local naughty      = require("naughty")
 local table        = table
 local tostring     = tostring
 local floor        = require("math").floor
+local cfg          = require("my-config")
 local capi         = {
 --     tag            = tag,
     client         = client,
@@ -54,7 +55,7 @@ cyclefocus = {
         -- Default callback, which will be applied for all offsets (first).
         default = function (preset, args)
             -- Default font and icon size (gets overwritten for current/0 index).
-            preset.font = 'sans 16'
+            preset.font = 'sans ' .. (8 * cfg.font_scale_factor)
             preset.icon_size = 32
             preset.text = escape_markup(cyclefocus.get_object_name(args.client))
 
@@ -71,7 +72,7 @@ cyclefocus = {
 
         -- Preset for current entry.
         ["0"] = function (preset, args)
-            preset.font = 'sans 20'
+            preset.font = 'sans ' .. (10 * cfg.font_scale_factor)
             preset.icon_size = 48
             -- Use get_object_name to handle .name=nil.
             preset.text = escape_markup(cyclefocus.get_object_name(args.client))
@@ -224,7 +225,7 @@ function history.add(c)
     table.insert(history.stack, 1, c)
 end
 
-function cyclefocus.find_history(idx, filters)
+function cyclefocus.find_history(idx, filters, with_fallback)
    for _, c in ipairs(history.stack) do
       local filtered = false
       
@@ -244,10 +245,14 @@ function cyclefocus.find_history(idx, filters)
       end
    end
 
-   if idx >= #history.stack then
-      return history.stack[#history.stack]
+   if with_fallback then
+      if idx >= #history.stack then
+         return history.stack[#history.stack]
+      else
+         return history.stack[idx + 1]
+      end
    else
-      return history.stack[idx + 1]
+      return nil
    end
 end
 -- }}}
