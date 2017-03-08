@@ -78,7 +78,7 @@ cyclefocus = {
             preset.text = escape_markup(cyclefocus.get_object_name(args.client))
             -- Add screen number if there are multiple.
             if screen.count() > 1 then
-                preset.text = preset.text .. " [screen " .. args.client.screen .. "]"
+                preset.text = preset.text .. " [screen " .. tostring(args.client.screen) .. "]"
             end
             preset.text = preset.text .. " [#" .. args.idx .. "] "
             preset.text = '<b>' .. preset.text .. '</b>'
