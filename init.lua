@@ -225,32 +225,17 @@ function history.add(c)
     table.insert(history.stack, 1, c)
 end
 
-function cyclefocus.find_history(idx, filters, with_fallback)
-   for _, c in ipairs(history.stack) do
-      local filtered = false
-      
-      for _, f in pairs(filters) do
-         if not f(c) then
-            filtered = true
-            break
-         end
-      end
-      
-      if not filtered then
-         if idx <= 0 then
+function cyclefocus.find_first_in_history(filters, fallback)
+   for _, f in pairs(filters) do
+      for _, c in ipairs(history.stack) do
+         if f(c) then
             return c
-         else
-            idx = idx - 1
          end
       end
    end
 
-   if with_fallback then
-      if idx >= #history.stack then
-         return history.stack[#history.stack]
-      else
-         return history.stack[idx + 1]
-      end
+   if fallback and #history.stack > 0 then
+      return history.stack[0]
    else
       return nil
    end
